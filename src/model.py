@@ -5,8 +5,8 @@ from pathlib import Path
 import yaml
 
 
-def _escape_string(string: str):
-    def clean_char(char: str):
+def _escape_string(string: str) -> str:
+    def clean_char(char: str) -> str:
         if char.isalnum() or char in ' ()_-.,':
             return char
         try:
