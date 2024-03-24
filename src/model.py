@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 
 
-def escape_string(string: str):
+def _escape_string(string: str):
     def clean_char(char: str):
         if char.isalnum() or char in ' ()_-.,':
             return char
@@ -32,10 +32,22 @@ class Folder(SongCollection):
     contents: list[SongCollection]
 
     def write(self, directory: Path):
-        my_dir = directory / escape_string(self.name)
+        my_dir = directory / _escape_string(self.name)
         my_dir.mkdir(exist_ok=True)
         for content in self.contents:
             content.write(my_dir)
+
+
+@dataclass
+class SongRecord(SongCollection, ABC):
+    @abstractmethod
+    def _file_name(self) -> str:
+        raise NotImplemented
+
+    def write(self, directory: Path):
+        path = (directory / _escape_string(self._file_name())).with_suffix('.yaml')
+        with path.open('w+') as file:
+            yaml.dump(asdict(self), file, sort_keys=False, allow_unicode=True)
 
 
 @dataclass
@@ -46,16 +58,11 @@ class Song:
 
 
 @dataclass
-class SongRecord(SongCollection, ABC):
+class LikedSongs(SongRecord):
+    songs: list[Song]
 
-    @abstractmethod
     def _file_name(self) -> str:
-        raise NotImplemented
-
-    def write(self, directory: Path):
-        path = (directory / escape_string(self._file_name())).with_suffix('.yaml')
-        with path.open('w+') as file:
-            yaml.dump(asdict(self), file, sort_keys=False, allow_unicode=True)
+        return 'Liked Songs'
 
 
 @dataclass
@@ -77,11 +84,3 @@ class Album(SongRecord):
 
     def _file_name(self) -> str:
         return f'{self.artist} - {self.name}'
-
-
-@dataclass
-class LikedSongs(SongRecord):
-    songs: list[Song]
-
-    def _file_name(self) -> str:
-        return 'Liked Songs'
