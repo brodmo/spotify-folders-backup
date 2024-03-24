@@ -1,5 +1,7 @@
 /.idea
 /.venv
-/root
-/folders.json
+.cache
+__pycache__
 folders.py
+/folders.json
+/Backup
