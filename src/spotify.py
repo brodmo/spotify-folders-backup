@@ -1,24 +1,22 @@
+from pathlib import Path
+
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from yaml import unsafe_load
 
-from credentials import *
 from model import Album, LikedSongs, Playlist, Song
 
 
-sp = spotipy.Spotify(
-    auth_manager=SpotifyOAuth(
-        client_id=client_id,
-        client_secret=client_secret,
-        redirect_uri=redirect_uri,
-        scope=['user-library-read', 'playlist-read-private', 'playlist-read-collaborative']
-    )
-)
+_credentials_path = Path(__file__).parent.parent / 'credentials.yaml'
+_credentials = unsafe_load(_credentials_path.read_text())
+_auth = SpotifyOAuth(**_credentials, scope='user-library-read')
+_sp = spotipy.Spotify(auth_manager=_auth)
 
 
 def _get_all_tracks(data):
     items = data['items']
     while data['next']:
-        data = sp.next(data)
+        data = _sp.next(data)
         items.extend(data['items'])
     return list(filter(bool, (item['track'] for item in items)))
 
@@ -40,12 +38,12 @@ def _get_songs(tracks):
 
 
 def get_liked_songs():
-    tracks = _get_all_tracks(sp.current_user_saved_tracks(limit=50))
+    tracks = _get_all_tracks(_sp.current_user_saved_tracks(limit=50))
     return LikedSongs(_get_songs(tracks))
 
 
 def get_song_record(uri: str):
-    data = sp.playlist(uri)
+    data = _sp.playlist(uri)
     tracks = _get_all_tracks(data['tracks'])
     album_data = _get_album_data(tracks)
     if album_data:

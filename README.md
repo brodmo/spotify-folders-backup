@@ -8,7 +8,7 @@ In this case, the individual tracks are not saved.
 
 ### Usage
 1. Clear Spotify cache in Spotify settings
-2. Add Spotify Web API credentials to `credentials.py`
+2. Add Spotify Web API credentials to `credentials.yaml`
 3. (Optional) To specify a custom cache directory, account, or folder,
 manually create `folders.json` with [spotify-folders](https://github.com/mikez/spotify-folders).
 Otherwise it is created automatically
