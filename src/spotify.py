@@ -1,16 +1,24 @@
-from pathlib import Path
-
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-from yaml import unsafe_load
+from spotipy.oauth2 import SpotifyPKCE
 
 from model import Album, LikedSongs, Playlist, Song, SongRecord
 
 
-_credentials_path = Path(__file__).parent.parent / 'credentials.yaml'
-_credentials = unsafe_load(_credentials_path.read_text())
-_auth = SpotifyOAuth(**_credentials, scope='user-library-read')
-_sp = spotipy.Spotify(auth_manager=_auth)
+# this is much simpler for the user than providing their own developer credentials
+# however, to enable public use, I would need to submit an extension request to Spotify
+# probably won't happen, since
+# - "we will not grant a quota extension for [...] hobby projects"
+#   (I might be misinterpreting this one, there are many "hobby projects" with an extensions
+#   such as https://github.com/watsonbox/exportify, https://github.com/secuvera/SpotMyBackup --
+#   where is the line between hobby project and open source?)
+# - "metadata [must be] attributed with the Spotify logo" (how would I do this in a text file??)
+# - "the app name or URL [must not] start with the word “spot”
+#   or have similar sound or spelling to Spotify" (how is anyone supposed to find it then?)
+# last one is probably a dealbreaker since I want a descriptive name
+_client_id = '6c83d30d576d4bcc93a609eef10b9344'
+_redirect_uri = 'http://localhost:8888/callback'
+_auth = SpotifyPKCE(client_id=_client_id, redirect_uri=_redirect_uri, scope='user-library-read')
+_sp = spotipy.Spotify(_auth.get_access_token())
 
 
 def _get_all_tracks(data) -> list[dict]:
