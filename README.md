@@ -9,7 +9,7 @@ In this case, the individual tracks are not included in the backup.
 
 ### Instructions
 1. Prepare Spotify
-   1. Clear Spotify cache in Spotify settings
+   1. Clear cache in Spotify settings
    2. [Windows only] Fully close Spotify (Alt+F4)
 2. Prepare script
    1. Add Spotify Web API credentials to `credentials.yaml`
