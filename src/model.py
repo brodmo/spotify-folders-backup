@@ -46,7 +46,7 @@ class SongRecord(SongCollection, ABC):
 
     def write(self, directory: Path):
         path = (directory / _escape_string(self._file_name())).with_suffix('.yaml')
-        with path.open('w+') as file:
+        with path.open('w+', encoding='UTF-8') as file:
             yaml.dump(asdict(self), file, sort_keys=False, allow_unicode=True)
 
 
