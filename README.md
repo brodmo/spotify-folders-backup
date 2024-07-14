@@ -16,6 +16,7 @@ In this case, the individual tracks are not included in the backup.
    2. [Optional] Specify a custom cache directory, account, or folder
    by running [spotify‑folders](https://github.com/mikez/spotify-folders) and writing the result to `folders.json`
 3. Run script
-   1. Install dependencies with `pip install -r requirements.txt`
-   2. Run with `python src/main.py`
+   1. Set up Python environment with Python >= 3.9
+   2. Install dependencies with `pip install -r requirements.txt`
+   3. Run with `python src/main.py`
 4. Result can be found in `Backup`
