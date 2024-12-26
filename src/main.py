@@ -6,8 +6,8 @@ from pathlib import Path
 
 import requests
 
-from model import Folder, SongCollection
-from spotify import get_liked_songs, get_song_record
+from src.model import Folder, SongCollection
+from src.spotify import get_liked_songs, get_song_record
 
 
 _here = Path(__file__).parent
