@@ -7,16 +7,11 @@ import yaml
 
 def _escape_string(string: str) -> str:
     def clean_char(char: str) -> str:
-        if char.isalnum() or char in ' ()_-.,':
+        if char.isalnum() or char in " ()_-.,":
             return char
-        try:
-            return {
-                '$': 'S',
-                '@': 'a'
-            }[char]
-        except KeyError:
-            return ''
-    return ''.join(map(clean_char, string))
+        return {"$": "S", "@": "a"}.get(char, "")
+
+    return "".join(map(clean_char, string))
 
 
 @dataclass
@@ -42,11 +37,11 @@ class Folder(SongCollection):
 class SongRecord(SongCollection, ABC):
     @abstractmethod
     def _file_name(self) -> str:
-        raise NotImplemented
+        raise NotImplementedError
 
     def write(self, directory: Path):
-        path = (directory / _escape_string(self._file_name())).with_suffix('.yaml')
-        with path.open('w+', encoding='UTF-8') as file:
+        path = (directory / _escape_string(self._file_name())).with_suffix(".yaml")
+        with path.open("w+", encoding="UTF-8") as file:
             yaml.dump(asdict(self), file, sort_keys=False, allow_unicode=True)
 
 
@@ -62,7 +57,7 @@ class LikedSongs(SongRecord):
     songs: list[Song]
 
     def _file_name(self) -> str:
-        return 'Liked Songs'
+        return "Liked Songs"
 
 
 @dataclass
@@ -73,7 +68,7 @@ class Playlist(SongRecord):
     songs: list[Song]
 
     def _file_name(self) -> str:
-        return self.name.replace('-', '')
+        return self.name.replace("-", "")
 
 
 @dataclass
@@ -83,4 +78,4 @@ class Album(SongRecord):
     name: str
 
     def _file_name(self) -> str:
-        return f'{self.artist} - {self.name}'
+        return f"{self.artist} - {self.name}"
