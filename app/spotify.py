@@ -4,7 +4,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from yaml import unsafe_load
 
-from src.model import Album, LikedSongs, Playlist, Song, SongRecord
+from app.model import Album, LikedSongs, Playlist, Song, SongRecord
 
 
 _credentials_path = Path(__file__).parent.parent / 'credentials.yaml'
