@@ -1,16 +1,12 @@
-from pathlib import Path
-
 import spotipy
+from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
-from yaml import unsafe_load
 
 from app.model import Album, LikedSongs, Playlist, Song, SongRecord
 
 
-_credentials_path = Path(__file__).parent.parent / 'credentials.yaml'
-_credentials = unsafe_load(_credentials_path.read_text())
-_auth = SpotifyOAuth(**_credentials, scope='user-library-read')
-_sp = spotipy.Spotify(auth_manager=_auth)
+load_dotenv()
+_sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
 
 
 def _get_all_tracks(data) -> list[dict]:

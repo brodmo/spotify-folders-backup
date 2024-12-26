@@ -12,7 +12,7 @@ In this case, the individual tracks are not included in the backup.
    1. Clear cache in Spotify settings
    2. [Windows only] Fully close Spotify (Alt+F4)
 2. Prepare script
-   1. Add Spotify Web API credentials to `credentials.yaml`
+   1. Copy `.env.template` to `.env` and fill in your Spotify credentials
    2. [Optional] Specify a custom cache directory, account, or folder
    by running [spotify‑folders](https://github.com/mikez/spotify-folders) manually
    and writing the result to `folders.json`

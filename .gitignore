@@ -6,3 +6,4 @@ folders.py
 /folders.json
 /Backup
 .DS_Store
+.env
