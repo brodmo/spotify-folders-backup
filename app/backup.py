@@ -24,7 +24,6 @@ def _write_folders_json():
         raise requests.RequestException(
             f"could not get spotifyfolders script from GitHub, reason:\n{response.text}"
         )
-    assert response.ok, "could not get spotfiyfolders script"
     folders_script_path = _here / "folders.py"
     folders_script_path.write_text(response.text)
     folders_script_path.chmod(folders_script_path.stat().st_mode | stat.S_IEXEC)
@@ -48,7 +47,7 @@ def _wrap(data: dict) -> SongCollection:
     )
 
 
-def main():
+def backup():
     if not _folders_json_path.exists():
         _write_folders_json()
     folders_data = json.loads(_folders_json_path.read_text())
@@ -57,7 +56,3 @@ def main():
     for child in folders_data["children"]:
         wrapped = _wrap(child)
         wrapped.write(_root)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,5 +1,5 @@
 [project]
-name = "folderbackup"
+name = "spotify-folders-backup"
 version = "0.1.0"
 description = "Backup your Spotify playlists including the folder structure"
 readme = "README.md"
@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-backup = "app.main:main"
+backup = "app.backup:backup"
 
 [build-system]
 requires = ["hatchling"]
