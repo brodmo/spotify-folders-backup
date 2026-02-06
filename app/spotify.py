@@ -6,7 +6,7 @@ from app.model import Album, LikedSongs, Playlist, Song, SongRecord
 
 
 load_dotenv()
-_sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
+_sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read"))
 
 
 def _get_all_tracks(data) -> list[dict]:
