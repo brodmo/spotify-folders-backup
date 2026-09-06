@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 import requests
+from tqdm import tqdm
 
 from app.model import Folder, SongCollection
 from app.spotify import get_liked_songs, get_song_record
@@ -39,20 +40,30 @@ def _write_folders_json():
     _folders_json_path.write_text(folders_json)
 
 
-def _wrap(data: dict) -> SongCollection:
-    return (
-        Folder(data["name"], [_wrap(child) for child in data["children"]])
-        if data["type"] == "folder"
-        else get_song_record(data["uri"])
-    )
+def _wrap(data: dict, progress) -> SongCollection:
+    if data["type"] == "folder":
+        return Folder(data["name"], [_wrap(child, progress) for child in data["children"]])
+    record = get_song_record(data["uri"])
+    progress.update(1)
+    return record
+
+
+def _count_playlists(data: dict) -> int:
+    if data["type"] == "folder":
+        return sum(_count_playlists(child) for child in data["children"])
+    return 1
 
 
 def backup():
+    tqdm.write("Reading Spotify folder structure…", file=sys.stderr)
     if not _folders_json_path.exists():
         _write_folders_json()
     folders_data = json.loads(_folders_json_path.read_text())
     _root.mkdir(exist_ok=True)
     get_liked_songs().write(_root)
-    for child in folders_data["children"]:
-        wrapped = _wrap(child)
-        wrapped.write(_root)
+    total = _count_playlists(folders_data)
+    with tqdm(total=total, desc="Playlists", unit="playlists") as progress:
+        for child in folders_data["children"]:
+            wrapped = _wrap(child, progress)
+            wrapped.write(_root)
+    tqdm.write(f"Backup complete: {total} playlists saved to {_root}/", file=sys.stderr)

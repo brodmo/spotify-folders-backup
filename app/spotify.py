@@ -1,6 +1,7 @@
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
+from tqdm import tqdm
 
 from app.model import Album, LikedSongs, Playlist, Song, SongRecord
 
@@ -9,11 +10,15 @@ load_dotenv()
 _sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read"))
 
 
-def _get_all_tracks(data) -> list[dict]:
+def _get_all_tracks(data, progress=None) -> list[dict]:
     items = data["items"]
+    if progress is not None:
+        progress.update(len(items))
     while data["next"]:
         data = _sp.next(data)
         items.extend(data["items"])
+        if progress is not None:
+            progress.update(len(data["items"]))
     return list(filter(bool, (item["track"] for item in items)))
 
 
@@ -31,7 +36,9 @@ def _get_songs(tracks: list[dict]) -> list[Song]:
 
 
 def get_liked_songs() -> LikedSongs:
-    tracks = _get_all_tracks(_sp.current_user_saved_tracks(limit=50))
+    data = _sp.current_user_saved_tracks(limit=50)
+    with tqdm(total=data["total"], desc="Liked songs", unit="tracks") as progress:
+        tracks = _get_all_tracks(data, progress)
     return LikedSongs(_get_songs(tracks))
 
 
