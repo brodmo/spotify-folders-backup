@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 import requests
+from spotipy.exceptions import SpotifyException
 from tqdm import tqdm
 
 from app.model import Folder, SongCollection
@@ -40,10 +41,21 @@ def _write_folders_json():
     _folders_json_path.write_text(folders_json)
 
 
-def _wrap(data: dict, progress) -> SongCollection:
+def _wrap(data: dict, progress) -> SongCollection | None:
     if data["type"] == "folder":
-        return Folder(data["name"], [_wrap(child, progress) for child in data["children"]])
-    record = get_song_record(data["uri"])
+        contents = [
+            wrapped
+            for child in data["children"]
+            if (wrapped := _wrap(child, progress)) is not None
+        ]
+        return Folder(data["name"], contents)
+    try:
+        record = get_song_record(data["uri"])
+    except SpotifyException as error:
+        # Skip algorithmic playlists
+        if error.http_status != 404:
+            raise
+        record = None
     progress.update(1)
     return record
 
@@ -65,5 +77,6 @@ def backup():
     with tqdm(total=total, desc="Playlists", unit="playlists") as progress:
         for child in folders_data["children"]:
             wrapped = _wrap(child, progress)
-            wrapped.write(_root)
-    tqdm.write(f"Backup complete: {total} playlists saved to {_root}/", file=sys.stderr)
+            if wrapped is not None:
+                wrapped.write(_root)
+    tqdm.write("Backup Complete", file=sys.stderr)

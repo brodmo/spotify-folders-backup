@@ -6,8 +6,10 @@ As the Spotify API does not support folders, the folder structure is reconstruct
 
 Playlists are automatically resolved to albums where appropriate.
 In this case, the individual tracks are not included in the backup.
+Algorithmic playlists are skipped as Spotify no longer exposes them through the API.
 
 ### Instructions
+
 1. Prepare Spotify
    1. Clear cache in Spotify settings
    2. [Windows only] Fully close Spotify (Alt+F4)
@@ -21,3 +23,7 @@ In this case, the individual tracks are not included in the backup.
       [here](https://docs.astral.sh/uv/getting-started/installation/)
    2. Run with `uv run backup`
 4. Result can be found in `Backup`
+
+### Troubleshooting
+
+- `invalid_grant: Refresh token revoked` -> delete `.cache` and try again

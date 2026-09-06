@@ -1,3 +1,5 @@
+import logging
+
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
@@ -6,6 +8,7 @@ from tqdm import tqdm
 from app.model import Album, LikedSongs, Playlist, Song, SongRecord
 
 
+logging.getLogger("spotipy.client").setLevel(logging.CRITICAL)
 load_dotenv()
 _sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read"))
 
