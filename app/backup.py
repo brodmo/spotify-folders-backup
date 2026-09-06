@@ -68,8 +68,9 @@ def _count_playlists(data: dict) -> int:
 
 def backup():
     tqdm.write("Reading Spotify folder structure…", file=sys.stderr)
-    if not _folders_json_path.exists():
-        _write_folders_json()
+    if _folders_json_path.exists():
+        _folders_json_path.unlink()
+    _write_folders_json()
     folders_data = json.loads(_folders_json_path.read_text())
     _root.mkdir(exist_ok=True)
     get_liked_songs().write(_root)
